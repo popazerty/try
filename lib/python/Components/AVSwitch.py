@@ -85,7 +85,7 @@ class AVSwitch:
 	if hw_type in ('elite', 'premium', 'premium+', 'ultra', "me", "minime"):
 		config.av.edid_override = True
 
-	if (about.getChipSetString() in ('7241', '7358', '7356', '7424', '7425', 'pnx8493')) or (hw_type in ('elite', 'premium', 'premium+', 'ultra', "me", "minime")):
+	if (about.getChipSetString() in ('7241', '7358', '7356', '7424', '7425', 'pnx8493', '7111', '7162')) or (hw_type in ('elite', 'premium', 'premium+', 'ultra', "me", "minime")):
 		supports1080p = True
 		modes["HDMI"] = ["1080p", "1080i", "720p", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"1080p", "1080i", "720p"}
@@ -208,6 +208,10 @@ class AVSwitch:
 				print "[AVSwitch] setting videomode failed:", err
 
 		self.setColorFormat({"cvbs": 0, "rgb": 1, "svideo": 2, "yuv": 3}[config.av.colorformat.value])
+		if about.getCPUString().startswith('STx'):
+			#call setResolution() with -1,-1 to read the new scrren dimesions without changing the framebuffer resolution
+			from enigma import gMainDC
+			gMainDC.getInstance().setResolution(-1, -1)
 
 	def saveMode(self, port, mode, rate):
 		config.av.videoport.setValue(port)
@@ -564,10 +568,16 @@ def InitAVSwitch():
 				f.close()
 			except:
 				pass
-		config.av.bypass_edid_checking = ConfigSelection(choices={
-				"00000000": _("off"),
-				"00000001": _("on")},
-				default="00000000")
+		if about.getChipSetString() in ('7111'):
+			config.av.bypass_edid_checking = ConfigSelection(choices={
+					"00000000": _("off"),
+					"00000001": _("on")},
+					default = "00000001")
+		else:
+			config.av.bypass_edid_checking = ConfigSelection(choices={
+					"00000000": _("off"),
+					"00000001": _("on")},
+					default = "00000000")
 		config.av.bypass_edid_checking.addNotifier(setEDIDBypass)
 	else:
 		config.av.bypass_edid_checking = ConfigNothing()

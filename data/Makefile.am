@@ -19,7 +19,11 @@ dist_pkgdata_DATA = \
 	picon_default.png 
 
 if HAVE_TEXTLCD
+if SPARK
+SUBDIRS += displaydualtext
+else
 SUBDIRS += displaytext
+endif
 endif
 
 if HAVE_COLORLCD

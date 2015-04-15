@@ -211,6 +211,9 @@ void gPixmap::fill(const gRegion &region, const gColor &color)
 			if (surface->clut.data && color < surface->clut.colors)
 				col = surface->clut.data[color].argb();
 			else
+#if defined(__sh__)
+if ((col&0xFF000000) == 0xFF000000) col = 0xFF000000;
+#endif
 				col = 0x10101 * color;
 
 			col^=0xFF000000;
@@ -257,6 +260,9 @@ void gPixmap::fill(const gRegion &region, const gRGB &color)
 			uint32_t col;
 
 			col = color.argb();
+#if defined(__sh__)
+if ((col&0xFF000000) == 0xFF000000) col = 0xFF000000;
+#endif
 			col^=0xFF000000;
 
 			if (surface->data_phys && (area.surface() > 20000))
