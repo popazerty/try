@@ -244,6 +244,7 @@ def getChipSetString():
 
 def getCPUSpeedString():
 	try:
+		mhz = "unknown"
 		file = open('/proc/cpuinfo', 'r')
 		lines = file.readlines()
 		for x in lines:
